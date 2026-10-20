@@ -104,6 +104,7 @@ Tests pretend to be iOS with `debugDefaultTargetPlatformOverride = TargetPlatfor
 4. The adaptive delete dialog.
 
 ```bash
+cp ../week-05/tests/day_3_test.dart test/week_05/
 flutter test test/week_05/day_3_test.dart
 ```
 

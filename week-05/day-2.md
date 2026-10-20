@@ -113,6 +113,7 @@ instructor will demo iOS.
 3. Check that a missing book shows `Book not found.` (the test sends a push for one).
 
 ```bash
+cp ../week-05/tests/day_2_test.dart test/week_05/
 flutter test test/week_05/day_2_test.dart
 ```
 

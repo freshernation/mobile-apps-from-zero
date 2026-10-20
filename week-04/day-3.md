@@ -96,10 +96,16 @@ something.
 3. `testing/fakes/fake_book_repository.dart`.
 4. Don't delete `items` yet. The app still uses it until tomorrow.
 
+Copy in today's tests: the contract and the test that runs it.
+
 ```bash
+cp ../week-04/tests/book_repository_contract.dart ../week-04/tests/day_3_test.dart test/week_04/
 flutter test test/week_04/day_3_test.dart
 bash tool/check.sh
 ```
+
+The contract imports `test/contracts/contract_helpers.dart` from the template. Keep
+that file when you delete the template's item tests tomorrow.
 
 5. **Prove the rules match the code:** your repository writes to
    `users/{uid}/books/{id}`. Find the line in `firestore.rules` that allows exactly

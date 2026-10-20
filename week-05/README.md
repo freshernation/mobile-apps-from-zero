@@ -9,7 +9,7 @@ This is the week the simulator stops being enough. The camera, notifications, sc
 readers and release builds can only be proven on a real phone, so the ship log
 matters more than ever.
 
-| Day | | You build | Tests (copy `week-05/tests/` into `shelf_v2/test/week_05/`) |
+| Day | | You build | Tests (each day, copy that day's file from `week-05/tests/` into `shelf_v2/test/week_05/`) |
 |---|---|---|---|
 | 1 | [The camera: scan a book to add it](day-1.md) | ISBN checking, lookup, the scan screen | `day_1_test.dart` |
 | 2 | [Notifications: a nudge, and a push](day-2.md) | A reminder at your time, a push that opens a book | `day_2_test.dart` |
@@ -19,8 +19,7 @@ matters more than ever.
 
 ```bash
 cd shelf_v2
-mkdir -p test/week_05 && cp ../week-05/tests/*.dart test/week_05/
-flutter test test/week_04 test/week_05
+flutter test test/week_04 test/week_05     # every day copied in so far
 bash tool/check.sh
 ```
 

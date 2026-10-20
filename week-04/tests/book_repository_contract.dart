@@ -9,14 +9,14 @@ import 'package:shelf_v2/utils/result.dart';
 import '../contracts/contract_helpers.dart';
 
 T ok<T>(Result<T> result) => switch (result) {
-      Ok(:final value) => value,
-      Error(:final error) => throw TestFailure('expected Ok, got $error'),
-    };
+  Ok(:final value) => value,
+  Error(:final error) => throw TestFailure('expected Ok, got $error'),
+};
 
 Exception err<T>(Result<T> result) => switch (result) {
-      Ok(:final value) => throw TestFailure('expected Error, got $value'),
-      Error(:final error) => error,
-    };
+  Ok(:final value) => throw TestFailure('expected Error, got $value'),
+  Error(:final error) => error,
+};
 
 Book book(String id, {String title = 'A book'}) =>
     Book(id: id, title: title, updatedAt: DateTime.utc(2000));
@@ -85,9 +85,11 @@ void bookRepositoryContract(
       final saved = ok(await books.addBook(book('a')));
       await tick();
 
-      final updated = ok(await books.updateBook(
-        saved.copyWith(status: ShelfStatus.done, currentPage: 5),
-      ));
+      final updated = ok(
+        await books.updateBook(
+          saved.copyWith(status: ShelfStatus.done, currentPage: 5),
+        ),
+      );
 
       expect(updated.status, ShelfStatus.done);
       expect(updated.currentPage, 5);
@@ -97,7 +99,10 @@ void bookRepositoryContract(
 
     test('updateBook of a missing book is NotFoundException', () async {
       final books = await signedInAs(uniqueEmail('missing'));
-      expect(err(await books.updateBook(book('nope'))), isA<NotFoundException>());
+      expect(
+        err(await books.updateBook(book('nope'))),
+        isA<NotFoundException>(),
+      );
       expect(ok(await books.getBooks()), isEmpty, reason: 'nothing was added');
     });
 
@@ -123,10 +128,17 @@ void bookRepositoryContract(
       expect(err(await b.getBook('private')), isA<NotFoundException>());
     });
 
-    test('signed out is NotSignedInException', skip: signedOut == null, () async {
-      final books = await signedOut!();
-      expect(err(await books.getBooks()), isA<NotSignedInException>());
-      expect(err(await books.addBook(book('a'))), isA<NotSignedInException>());
-    });
+    test(
+      'signed out is NotSignedInException',
+      skip: signedOut == null,
+      () async {
+        final books = await signedOut!();
+        expect(err(await books.getBooks()), isA<NotSignedInException>());
+        expect(
+          err(await books.addBook(book('a'))),
+          isA<NotSignedInException>(),
+        );
+      },
+    );
   });
 }

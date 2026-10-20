@@ -81,13 +81,18 @@ Then set Shelf's colour: `seedColor` in `lib/ui/core/theme.dart` →
 bash tool/check.sh     # formatting, lints and every test: green before every commit
 ```
 
-and the course's tests for this week, which you copy in:
+and the course's tests, which you copy in **one day at a time**:
 
 ```bash
 mkdir -p test/week_04
-cp ../week-04/tests/*.dart test/week_04/
+cp ../week-04/tests/day_1_test.dart test/week_04/
 flutter test test/week_04
 ```
+
+Why not all of them at once? Day 3's and day 4's tests import files you haven't
+written yet (`book.dart`, `book_repository.dart`…). Copied today, they'd turn
+`check.sh` red for three days for no reason. Each day's lesson tells you which files
+to copy.
 
 ### The tour
 
@@ -110,7 +115,7 @@ Then look at what's new and read it in this order:
 ## Exercises
 
 1. Clone, run on REST, rename, recolour (above).
-2. Copy in this week's tests. `flutter test test/week_04/day_1_test.dart` should be
+2. Copy in today's test. `flutter test test/week_04/day_1_test.dart` should be
    green.
 3. `bash tool/check.sh`: green.
 4. **The map, in your own words.** Create `shelf_v2/NOTES.md`. For each row of the

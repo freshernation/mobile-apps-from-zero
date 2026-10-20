@@ -56,10 +56,10 @@ void main() {
 
     test('fromOpenLibrary uses the time you give it', () {
       final now = DateTime.utc(2026, 1, 1);
-      final book = Book.fromOpenLibrary(
-        {'key': '/works/OL1W', 'title': 'Untitled'},
-        now: now,
-      );
+      final book = Book.fromOpenLibrary({
+        'key': '/works/OL1W',
+        'title': 'Untitled',
+      }, now: now);
       expect(book.id, 'OL1W');
       expect(book.updatedAt, now);
     });
@@ -69,7 +69,8 @@ void main() {
   bookRepositoryContract(
     'Fake',
     // The fake has no "signed out"; the Firebase run below covers it.
-    signedInAs: (email) async => FakeBookRepository(userId: email, store: store),
+    signedInAs: (email) async =>
+        FakeBookRepository(userId: email, store: store),
   );
 
   final firestore = FakeFirebaseFirestore();
@@ -82,10 +83,8 @@ void main() {
         mockUser: MockUser(uid: email, email: email),
       ),
     ),
-    signedOut: () async => BookRepositoryFirebase(
-      firestore: firestore,
-      auth: MockFirebaseAuth(),
-    ),
+    signedOut: () async =>
+        BookRepositoryFirebase(firestore: firestore, auth: MockFirebaseAuth()),
   );
 
   group('BookRepositoryFirebase', () {
@@ -103,7 +102,8 @@ void main() {
       );
     });
 
-    Book dune() => Book(id: 'OL1W', title: 'Dune', updatedAt: DateTime.utc(2000));
+    Book dune() =>
+        Book(id: 'OL1W', title: 'Dune', updatedAt: DateTime.utc(2000));
 
     test('keeps books at users/{uid}/books/{id}', () async {
       await books.addBook(dune());
@@ -117,7 +117,9 @@ void main() {
     test('an add does not wait for the server to confirm it', () async {
       whenCalling(Invocation.method(#set, null))
           .on(db.doc('users/u1/books/OL1W'))
-          .thenThrow(FirebaseException(plugin: 'firestore', code: 'unavailable'));
+          .thenThrow(
+            FirebaseException(plugin: 'firestore', code: 'unavailable'),
+          );
 
       final result = await books.addBook(dune());
 

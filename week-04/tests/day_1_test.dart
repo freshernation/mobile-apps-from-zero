@@ -22,7 +22,8 @@ void main() {
   });
 
   test('the iOS bundle id is your own, not the example one', () {
-    final project = File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+    final project = File('ios/Runner.xcodeproj/project.pbxproj')
+        .readAsStringSync();
     expect(project, isNot(contains('com.example')));
   });
 }

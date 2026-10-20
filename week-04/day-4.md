@@ -109,6 +109,7 @@ easier to read.
 4. Wiring, then remove what you don't use.
 
 ```bash
+cp ../week-04/tests/day_4_test.dart test/week_04/
 flutter test test/week_04
 bash tool/check.sh
 ```

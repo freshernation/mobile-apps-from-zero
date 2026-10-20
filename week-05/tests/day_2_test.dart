@@ -35,22 +35,27 @@ void main() {
       shelf.dispose();
     });
 
-    test('without permission, nothing is scheduled and you are told why',
-        () async {
-      final notifications = FakeNotificationService()..permissionGranted = false;
-      final shelf = ShelfViewModel(
-        books: FakeBookRepository(),
-        auth: FakeAuthRepository(),
-        notifications: notifications,
-      );
+    test(
+      'without permission, nothing is scheduled and you are told why',
+      () async {
+        final notifications = FakeNotificationService()
+          ..permissionGranted = false;
+        final shelf = ShelfViewModel(
+          books: FakeBookRepository(),
+          auth: FakeAuthRepository(),
+          notifications: notifications,
+        );
 
-      await shelf.setReminder.execute(const TimeOfDay(hour: 21, minute: 0));
+        await shelf.setReminder.execute(const TimeOfDay(hour: 21, minute: 0));
 
-      expect(notifications.scheduled, isEmpty);
-      expect((shelf.setReminder.result as Error).error,
-          isA<PermissionDeniedException>());
-      shelf.dispose();
-    });
+        expect(notifications.scheduled, isEmpty);
+        expect(
+          (shelf.setReminder.result as Error).error,
+          isA<PermissionDeniedException>(),
+        );
+        shelf.dispose();
+      },
+    );
   });
 
   group('push routes', () {
@@ -60,7 +65,13 @@ void main() {
     });
 
     test('anything else is ignored', () {
-      for (final route in ['/items/1', '/admin', '/books/../admin', 'https://x.y', '']) {
+      for (final route in [
+        '/items/1',
+        '/admin',
+        '/books/../admin',
+        'https://x.y',
+        '',
+      ]) {
         expect(NotificationRouter.isAllowed(route), isFalse, reason: route);
       }
     });
@@ -73,19 +84,25 @@ void main() {
       final auth = FakeAuthRepository();
       await auth.signUp(email: 'a@x.com', password: 'pw');
       notifications = FakeNotificationService();
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthRepository>.value(value: auth),
-          Provider<BookRepository>.value(value: FakeBookRepository(books: books)),
-          Provider<NotificationService>.value(value: notifications),
-          Provider<OpenLibraryService>.value(value: OpenLibraryService()),
-        ],
-        child: const App(),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AuthRepository>.value(value: auth),
+            Provider<BookRepository>.value(
+              value: FakeBookRepository(books: books),
+            ),
+            Provider<NotificationService>.value(value: notifications),
+            Provider<OpenLibraryService>.value(value: OpenLibraryService()),
+          ],
+          child: const App(),
+        ),
+      );
       await tester.pumpAndSettle();
     }
 
-    testWidgets('the menu sets the reminder with a time picker', (tester) async {
+    testWidgets('the menu sets the reminder with a time picker', (
+      tester,
+    ) async {
       await pumpApp(tester, []);
 
       await tester.tap(find.byKey(const Key('menu')));
@@ -113,8 +130,9 @@ void main() {
       );
     });
 
-    testWidgets('a push for a deleted book says so, and does not crash',
-        (tester) async {
+    testWidgets('a push for a deleted book says so, and does not crash', (
+      tester,
+    ) async {
       await pumpApp(tester, []);
 
       notifications.taps.add('/books/gone');

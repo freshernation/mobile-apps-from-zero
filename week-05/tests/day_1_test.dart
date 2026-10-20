@@ -67,7 +67,12 @@ void main() {
       final service = OpenLibraryService(
         client: MockClient((request) async {
           asked = request.url;
-          return http.Response(jsonEncode({'docs': [duneDoc]}), 200);
+          return http.Response(
+            jsonEncode({
+              'docs': [duneDoc],
+            }),
+            200,
+          );
         }),
       );
 
@@ -80,10 +85,14 @@ void main() {
     test('an ISBN Open Library does not know is Ok(null)', () async {
       final service = OpenLibraryService(
         client: MockClient(
-            (_) async => http.Response(jsonEncode({'docs': []}), 200)),
+          (_) async => http.Response(jsonEncode({'docs': []}), 200),
+        ),
       );
 
-      expect((await service.byIsbn('9780441172719') as Ok<Book?>).value, isNull);
+      expect(
+        (await service.byIsbn('9780441172719') as Ok<Book?>).value,
+        isNull,
+      );
     });
   });
 
@@ -147,27 +156,34 @@ void main() {
       expect((await books.getBooks() as Ok<List<Book>>).value, isEmpty);
     });
 
-    test('no connection is a NetworkException, and the next scan retries',
-        () async {
-      var calls = 0;
-      books = FakeBookRepository();
-      scan = ScanViewModel(
-        service: OpenLibraryService(
-          client: MockClient((_) async {
-            calls++;
-            return calls == 1
-                ? http.Response('down', 503)
-                : http.Response(jsonEncode({'docs': [duneDoc]}), 200);
-          }),
-        ),
-        books: books,
-      );
+    test(
+      'no connection is a NetworkException, and the next scan retries',
+      () async {
+        var calls = 0;
+        books = FakeBookRepository();
+        scan = ScanViewModel(
+          service: OpenLibraryService(
+            client: MockClient((_) async {
+              calls++;
+              return calls == 1
+                  ? http.Response('down', 503)
+                  : http.Response(
+                      jsonEncode({
+                        'docs': [duneDoc],
+                      }),
+                      200,
+                    );
+            }),
+          ),
+          books: books,
+        );
 
-      await scan.onBarcode.execute('9780441172719');
-      expect((scan.onBarcode.result as Error).error, isA<NetworkException>());
+        await scan.onBarcode.execute('9780441172719');
+        expect((scan.onBarcode.result as Error).error, isA<NetworkException>());
 
-      await scan.onBarcode.execute('9780441172719');
-      expect((scan.onBarcode.result as Ok<Book?>).value?.title, 'Dune');
-    });
+        await scan.onBarcode.execute('9780441172719');
+        expect((scan.onBarcode.result as Ok<Book?>).value?.title, 'Dune');
+      },
+    );
   });
 }

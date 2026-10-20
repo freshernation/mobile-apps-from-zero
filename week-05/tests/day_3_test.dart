@@ -43,26 +43,34 @@ Future<void> pumpApp(WidgetTester tester, {List<Book>? shelf}) async {
   final auth = FakeAuthRepository();
   await auth.signUp(email: 'a@x.com', password: 'pw');
   books = FakeBookRepository(books: shelf ?? [longBook]);
-  await tester.pumpWidget(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<AuthRepository>.value(value: auth),
-      Provider<BookRepository>.value(value: books),
-      Provider<NotificationService>.value(value: FakeNotificationService()),
-      Provider<OpenLibraryService>.value(
-        value: OpenLibraryService(
-          client: MockClient((_) async => http.Response(
+  await tester.pumpWidget(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthRepository>.value(value: auth),
+        Provider<BookRepository>.value(value: books),
+        Provider<NotificationService>.value(value: FakeNotificationService()),
+        Provider<OpenLibraryService>.value(
+          value: OpenLibraryService(
+            client: MockClient(
+              (_) async => http.Response(
                 jsonEncode({
                   'docs': [
-                    {'key': '/works/OL2W', 'title': longBook.title, 'author_name': longBook.authors},
+                    {
+                      'key': '/works/OL2W',
+                      'title': longBook.title,
+                      'author_name': longBook.authors,
+                    },
                   ],
                 }),
                 200,
-              )),
+              ),
+            ),
+          ),
         ),
-      ),
-    ],
-    child: const App(),
-  ));
+      ],
+      child: const App(),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
@@ -81,15 +89,19 @@ Future<void> openSearchResults(WidgetTester tester) async {
 
 void expectEveryIconButtonHasATooltip(WidgetTester tester) {
   for (final button in tester.widgetList<IconButton>(find.byType(IconButton))) {
-    expect(button.tooltip, isNotEmpty,
-        reason: 'a screen reader says nothing useful for an icon with no tooltip');
+    expect(
+      button.tooltip,
+      isNotEmpty,
+      reason: 'a screen reader says nothing useful for an icon with no tooltip',
+    );
   }
 }
 
 void main() {
   group('states', () {
-    testWidgets('a shelf that fails to load says so, and retry loads it',
-        (tester) async {
+    testWidgets('a shelf that fails to load says so, and retry loads it', (
+      tester,
+    ) async {
       await pumpApp(tester, shelf: [longBook]);
       books.failWith = const NetworkException();
       await tester.drag(find.byType(ListView), const Offset(0, 300));
@@ -98,21 +110,26 @@ void main() {
       expect(find.byKey(const Key('book-OL1W')), findsOneWidget);
     });
 
-    testWidgets('a shelf that fails on first load shows an error and retry',
-        (tester) async {
+    testWidgets('a shelf that fails on first load shows an error and retry', (
+      tester,
+    ) async {
       final auth = FakeAuthRepository();
       await auth.signUp(email: 'a@x.com', password: 'pw');
       final failing = FakeBookRepository(books: [longBook])
         ..failWith = const NetworkException();
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthRepository>.value(value: auth),
-          Provider<BookRepository>.value(value: failing),
-          Provider<NotificationService>.value(value: FakeNotificationService()),
-          Provider<OpenLibraryService>.value(value: OpenLibraryService()),
-        ],
-        child: const App(),
-      ));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AuthRepository>.value(value: auth),
+            Provider<BookRepository>.value(value: failing),
+            Provider<NotificationService>.value(
+              value: FakeNotificationService(),
+            ),
+            Provider<OpenLibraryService>.value(value: OpenLibraryService()),
+          ],
+          child: const App(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('shelf-error')), findsOneWidget);
@@ -125,8 +142,9 @@ void main() {
   });
 
   group('screen readers', () {
-    testWidgets('every icon button on every screen has a tooltip',
-        (tester) async {
+    testWidgets('every icon button on every screen has a tooltip', (
+      tester,
+    ) async {
       await pumpApp(tester);
       expectEveryIconButtonHasATooltip(tester);
 
@@ -139,13 +157,17 @@ void main() {
       expectEveryIconButtonHasATooltip(tester);
     });
 
-    testWidgets('the progress slider reads out the page, not a number',
-        (tester) async {
+    testWidgets('the progress slider reads out the page, not a number', (
+      tester,
+    ) async {
       await pumpApp(tester);
       await openBook(tester);
 
       // The node a screen reader lands on when it reaches the slider.
-      final slider = find.semantics.byFlag(SemanticsFlag.isSlider).evaluate().single;
+      final slider = find.semantics
+          .byFlag(SemanticsFlag.isSlider)
+          .evaluate()
+          .single;
       expect(slider.value, 'Page 120 of 832', reason: 'not "14%"');
     });
   });

@@ -31,27 +31,30 @@ const duneDoc = {
 };
 
 OpenLibraryService openLibrary() => OpenLibraryService(
-      client: MockClient((_) async => http.Response(
-            jsonEncode({
-              'docs': [duneDoc],
-            }),
-            200,
-          )),
-    );
+  client: MockClient(
+    (_) async => http.Response(
+      jsonEncode({
+        'docs': [duneDoc],
+      }),
+      200,
+    ),
+  ),
+);
 
-Book book(String id,
-        {ShelfStatus status = ShelfStatus.reading,
-        int? pages = 400,
-        int page = 100,
-        int minute = 0}) =>
-    Book(
-      id: id,
-      title: 'Book $id',
-      pageCount: pages,
-      status: status,
-      currentPage: page,
-      updatedAt: DateTime.utc(2026, 1, 1, 0, minute),
-    );
+Book book(
+  String id, {
+  ShelfStatus status = ShelfStatus.reading,
+  int? pages = 400,
+  int page = 100,
+  int minute = 0,
+}) => Book(
+  id: id,
+  title: 'Book $id',
+  pageCount: pages,
+  status: status,
+  currentPage: page,
+  updatedAt: DateTime.utc(2026, 1, 1, 0, minute),
+);
 
 Future<List<Book>> saved(BookRepository repo) async =>
     (await repo.getBooks() as Ok<List<Book>>).value;
@@ -62,10 +65,12 @@ void main() {
     late ShelfViewModel shelf;
 
     setUp(() async {
-      repo = FakeBookRepository(books: [
-        book('a', minute: 1),
-        book('b', status: ShelfStatus.wantToRead, minute: 2),
-      ]);
+      repo = FakeBookRepository(
+        books: [
+          book('a', minute: 1),
+          book('b', status: ShelfStatus.wantToRead, minute: 2),
+        ],
+      );
       shelf = ShelfViewModel(
         books: repo,
         auth: FakeAuthRepository(),
@@ -81,14 +86,16 @@ void main() {
       expect(shelf.booksWith(ShelfStatus.reading).map((b) => b.id), ['a']);
     });
 
-    test('moving a book to Done puts you on its last page, and saves it',
-        () async {
-      await shelf.setStatus.execute((id: 'a', status: ShelfStatus.done));
+    test(
+      'moving a book to Done puts you on its last page, and saves it',
+      () async {
+        await shelf.setStatus.execute((id: 'a', status: ShelfStatus.done));
 
-      final a = (await saved(repo)).firstWhere((b) => b.id == 'a');
-      expect(a.status, ShelfStatus.done);
-      expect(a.currentPage, 400);
-    });
+        final a = (await saved(repo)).firstWhere((b) => b.id == 'a');
+        expect(a.status, ShelfStatus.done);
+        expect(a.currentPage, 400);
+      },
+    );
 
     test('setPage clamps to the book', () async {
       await shelf.setPage.execute((id: 'a', page: 9999));
@@ -169,22 +176,26 @@ void main() {
     await auth.signUp(email: 'a@x.com', password: 'pw');
     final repo = FakeBookRepository();
 
-    await tester.pumpWidget(MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AuthRepository>.value(value: auth),
-        Provider<BookRepository>.value(value: repo),
-        Provider<NotificationService>.value(value: FakeNotificationService()),
-        Provider<OpenLibraryService>.value(value: openLibrary()),
-      ],
-      child: const App(),
-    ));
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AuthRepository>.value(value: auth),
+          Provider<BookRepository>.value(value: repo),
+          Provider<NotificationService>.value(value: FakeNotificationService()),
+          Provider<OpenLibraryService>.value(value: openLibrary()),
+        ],
+        child: const App(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     Future<void> pickShelf(String label) async {
-      await tester.tap(find.descendant(
-        of: find.byKey(const Key('status-filter')),
-        matching: find.text(label),
-      ));
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('status-filter')),
+          matching: find.text(label),
+        ),
+      );
       await tester.pumpAndSettle();
     }
 
@@ -206,10 +217,12 @@ void main() {
     // Finish it.
     await tester.tap(find.byKey(const Key('book-OL893414W')));
     await tester.pumpAndSettle();
-    await tester.tap(find.descendant(
-      of: find.byKey(const Key('status-picker')),
-      matching: find.text('Done'),
-    ));
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('status-picker')),
+        matching: find.text('Done'),
+      ),
+    );
     await tester.pumpAndSettle();
     final done = (await saved(repo)).single;
     expect(done.status, ShelfStatus.done);

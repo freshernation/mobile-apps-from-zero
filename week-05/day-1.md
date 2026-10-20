@@ -113,7 +113,7 @@ button to the shelf's app bar (`open-scan`, an `IconButton` with a tooltip) that
 
 1. `isbnFrom`, then `byIsbn`, then `ScanViewModel`. The tests drive all three:
    ```bash
-   mkdir -p test/week_05 && cp ../week-05/tests/*.dart test/week_05/
+   mkdir -p test/week_05 && cp ../week-05/tests/day_1_test.dart test/week_05/
    flutter test test/week_05/day_1_test.dart
    ```
 2. `ScanScreen` (camera, ISBN field, result), the route, the shelf button, and the iOS
