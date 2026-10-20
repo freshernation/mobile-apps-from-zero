@@ -54,6 +54,25 @@ The routes live in `Routes`: `Routes.home`, `Routes.search`, `Routes.book(id)`. 
 notification allowlist in `routing/notification_router.dart` changes from
 `/items/…` to `/books/…`, so a push can open a book.
 
+### Pull to refresh works on an empty shelf too
+
+New books land on Want to read, but the shelf opens on Reading, so a fresh phone
+often shows an empty shelf. It must still be pullable, or a book added on your other
+phone never appears. Put the empty message *inside* the `RefreshIndicator`, in a list
+that can always scroll:
+
+```dart
+RefreshIndicator(
+  onRefresh: viewModel.load.execute,
+  child: books.isEmpty
+      ? ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [SizedBox(height: 120), Center(key: Key('empty-shelf'), child: Text(AppStrings.emptyShelf))],
+        )
+      : ListView.builder(...),
+)
+```
+
 ### Delete asks first
 
 Deleting from every device at once deserves a second chance:

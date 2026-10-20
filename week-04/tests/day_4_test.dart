@@ -171,6 +171,35 @@ void main() {
     });
   });
 
+  testWidgets('an empty shelf can still be pulled to refresh', (tester) async {
+    final auth = FakeAuthRepository();
+    await auth.signUp(email: 'a@x.com', password: 'pw');
+    final repo = FakeBookRepository();
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AuthRepository>.value(value: auth),
+          Provider<BookRepository>.value(value: repo),
+          Provider<NotificationService>.value(value: FakeNotificationService()),
+          Provider<OpenLibraryService>.value(value: openLibrary()),
+        ],
+        child: const App(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('empty-shelf')), findsOneWidget);
+
+    // Added on another phone.
+    await repo.addBook(book('x'));
+    await tester.drag(
+      find.byKey(const Key('empty-shelf')),
+      const Offset(0, 300),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('book-x')), findsOneWidget);
+  });
+
   testWidgets('a book from search to Done to deleted', (tester) async {
     final auth = FakeAuthRepository();
     await auth.signUp(email: 'a@x.com', password: 'pw');

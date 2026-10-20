@@ -31,7 +31,10 @@ on.
 
 And one more that's easy to forget: **failed, but you already have data**. A pull to
 refresh on a train mustn't wipe the shelf you were looking at. Keep the books you
-have and show the error in a SnackBar, not instead of the list.
+have and show the error in a SnackBar, not instead of the list. Listen to the `load`
+command in the screen. When it fails **and there are books on screen**, show the
+SnackBar and `clearResult()`. When there are no books, the full-screen error shows
+instead.
 
 ### Screen readers read what you tell them
 

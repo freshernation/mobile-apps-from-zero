@@ -99,15 +99,17 @@ void expectEveryIconButtonHasATooltip(WidgetTester tester) {
 
 void main() {
   group('states', () {
-    testWidgets('a shelf that fails to load says so, and retry loads it', (
+    testWidgets('a failed refresh keeps your books, and says so', (
       tester,
     ) async {
       await pumpApp(tester, shelf: [longBook]);
       books.failWith = const NetworkException();
+
       await tester.drag(find.byType(ListView), const Offset(0, 300));
       await tester.pumpAndSettle();
-      // A failed refresh keeps the books you already had…
+
       expect(find.byKey(const Key('book-OL1W')), findsOneWidget);
+      expect(find.byType(SnackBar), findsOneWidget);
     });
 
     testWidgets('a shelf that fails on first load shows an error and retry', (

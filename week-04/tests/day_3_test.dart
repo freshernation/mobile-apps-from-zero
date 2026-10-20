@@ -125,5 +125,33 @@ void main() {
 
       expect((result as Ok<Book>).value.id, 'OL1W');
     });
+
+    test('an update does not wait for the server to confirm it', () async {
+      final added = (await books.addBook(dune()) as Ok<Book>).value;
+      await pumpEventQueue();
+      whenCalling(Invocation.method(#set, null))
+          .on(db.doc('users/u1/books/OL1W'))
+          .thenThrow(
+            FirebaseException(plugin: 'firestore', code: 'unavailable'),
+          );
+
+      final result = await books.updateBook(
+        added.copyWith(status: ShelfStatus.done),
+      );
+
+      expect((result as Ok<Book>).value.status, ShelfStatus.done);
+    });
+
+    test('a delete does not wait for the server to confirm it', () async {
+      await books.addBook(dune());
+      await pumpEventQueue();
+      whenCalling(Invocation.method(#delete, null))
+          .on(db.doc('users/u1/books/OL1W'))
+          .thenThrow(
+            FirebaseException(plugin: 'firestore', code: 'unavailable'),
+          );
+
+      expect(await books.deleteBook('OL1W'), isA<Ok<void>>());
+    });
   });
 }
