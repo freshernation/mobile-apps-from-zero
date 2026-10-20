@@ -66,6 +66,15 @@ class Book {
   factory Book.fromJson(Map<String, Object?> json) =>
       throw UnimplementedError('Week 1, day 2: fromJson');
 
+  // Week 3, day 3 — ignore until then.
+  /// A book from one Open Library search result ("doc"): its `key` without
+  /// the '/works/' prefix as the id, `title`, `author_name`,
+  /// `number_of_pages_median` as the page count, and a cover URL from
+  /// `cover_i` (`https://covers.openlibrary.org/b/id/COVER_I-M.jpg`). Missing
+  /// fields mean no authors, no page count, no cover.
+  factory Book.fromOpenLibrary(Map<String, Object?> doc) =>
+      throw UnimplementedError('Week 3, day 3: fromOpenLibrary');
+
   // TODO(week 1, day 2): override == and hashCode, so two books with the same
   // values are equal. The lesson explains why you need both.
 }
