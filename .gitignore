@@ -2,3 +2,7 @@
 
 # Instructor materials: reference solutions and runbooks. Keep in a separate private repo.
 instructor/
+
+# Shelf build output
+shelf/build/
+shelf/.dart_tool/
