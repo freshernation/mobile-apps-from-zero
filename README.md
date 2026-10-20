@@ -5,7 +5,8 @@ iOS, built with Flutter, that you can explain line by line and would show anyone
 
 You need to have written *some* code (a little Python or JavaScript, a tutorial or
 two) and to have never built an app. You don't need a Mac (Android is the core path;
-a Mac adds iOS). You do need about four hours a day.
+a Mac adds iOS), but you do need a real phone by week 5. You also need about four
+hours a day.
 
 Everything here aims at one outcome: **in week 6 you build your own app, from the
 course's template, in five days, and defend it live:** demo it, explain any line

@@ -35,6 +35,7 @@ check.
 
 ## What goes in your log
 
-Every role ends its session by printing a `SIGNAL` block. Copy its line into
-[logs/signal-log.md](../logs/signal-log.md). It takes ten seconds, and it's how your
+Every role ends its session by printing a `SIGNAL` line. Paste it under **AI
+sessions** at the bottom of [logs/signal-log.md](../logs/signal-log.md) (not in the
+daily table). It takes ten seconds, and it's how your
 instructor knows where to spend tomorrow's live hour.

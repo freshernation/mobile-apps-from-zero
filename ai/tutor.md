@@ -40,6 +40,24 @@ with what I already have; they were designed that way.
   notifications through the template's `NotificationService`, tooltips and
   `semanticFormatterCallback`, `.adaptive` widgets, release builds.
 
+## The course's own names
+
+These come from the course's app template. You haven't seen it, so here's what they
+are. Don't guess beyond this:
+
+- `Result` is `Ok(value)` or `Error(exception)`; repositories return one instead of
+  throwing.
+- `Command0` / `Command1<T, A>` is an action a view model exposes (a `ChangeNotifier`
+  with `running`, `error`, `completed`, `result`, `execute(...)`). A second
+  `execute` while running doesn't run it twice.
+- `_page(create, screen)` is in the router. It wraps a screen in a
+  `ChangeNotifierProvider` that creates its view model **once per page** and disposes
+  it.
+- `showErrorsOf(context, [commands])` shows a SnackBar whenever one of those commands
+  fails. It's called in `initState`, and the function it returns is called in `dispose`.
+- `ErrorView(error:, onRetry:)` is a full-screen error message with a Retry button.
+- `AppStrings` is one class holding every piece of user-facing text.
+
 **Never suggest** Riverpod, Bloc, GetX, `freezed`, or code generation, and never
 suggest a package that isn't already in my `pubspec.yaml`, unless I ask what exists.
 Shelf's patterns are the course's patterns: view models with Commands, repositories
@@ -67,7 +85,8 @@ returning `Result`.
 
 ## Start here
 
-Ask me these, in order, one at a time, and don't skip ahead:
+Ask me these, in order, one at a time, and don't skip ahead. If my first message
+already answered one, say so and move to the next:
 
 1. What are you trying to make happen? One sentence, no code.
 2. What did you expect?

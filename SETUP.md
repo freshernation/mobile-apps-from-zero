@@ -16,13 +16,32 @@ instructor before the course starts. Don't wait for Monday.
 | **Memory** | 8 GB RAM | 16 GB: the Android emulator is hungry |
 | **Disk** | 30 GB free | 50 GB: Android SDK, emulator images, Xcode and build output add up fast |
 | **For iOS** | — | A Mac with Xcode. Without one you do everything on Android, and iOS is taught but not required. |
-| **A phone** | — | An Android phone and its USB cable. Weeks 5–6 need a real device for the camera, notifications and release builds. |
-| **Accounts** | A Google account (Firebase, week 4) | Apple Developer Program ($99/yr), *only* for iOS push and App Store builds. Not required. |
+| **A phone** | **By week 5:** an Android phone and its USB cable, or an iPhone if you have a Mac. Project 3 and the capstone are checked on a real phone. | Android, for push notifications without a paid Apple account |
+| **Accounts** | A **GitHub** account (to push your work); a **Google** account (Firebase, week 4: the free Spark plan, no card needed) | Apple Developer Program ($99/yr) for iOS push, TestFlight and installs that last more than 7 days. A free Apple ID installs on your own iPhone for 7 days. Not required. |
 
 Slow computer? A physical Android phone over USB is an accepted alternative to the
 emulator, and often faster.
 
 ---
+
+## 0. Your own copy of this course
+
+You'll push your work all course: your code, your logs, your ship log. So you need
+your **own** copy of this repository, not a download.
+
+1. Create a free [GitHub](https://github.com) account if you don't have one.
+2. Open the course repository your instructor shared and make your own copy:
+   **Use this template → Create a new repository** if it's offered, otherwise
+   **Fork**. Make it **private** if your instructor asks.
+3. Clone your copy (git is step 5 below, so do that first if you don't have it):
+   ```bash
+   git clone https://github.com/<you>/<your-copy>.git
+   cd <your-copy>
+   ```
+4. Add your instructor as a collaborator (repository **Settings → Collaborators**) so
+   they can read your logs before each live hour.
+
+From now on, "push" means `git add -A && git commit -m "…" && git push`.
 
 ## 1. Flutter 3.47.7
 
@@ -68,14 +87,24 @@ names.
 1. Install **Xcode** from the Mac App Store, then open it once and let it install its
    components.
 2. ```bash
+   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+   sudo xcodebuild -runFirstLaunch
    sudo xcodebuild -license accept
    xcodebuild -downloadPlatform iOS
    ```
+   The first line matters if you ever installed Apple's "Command Line Tools" on their
+   own (Homebrew, or the prompt `git` shows). Without it, `xcodebuild` uses the wrong
+   copy.
 3. `open -a Simulator` should show an iPhone.
 
 ## 5. git
 
 You probably have it: `git --version`. If not: [git-scm.com](https://git-scm.com/downloads).
+
+**On Windows,** install **Git for Windows** and run the course's commands in **Git
+Bash** (it's in the Start menu after installing). The lessons use `bash`, `rm -rf`, `cp`
+and `mkdir -p`, which don't exist in PowerShell or the Command Prompt. Flutter itself
+works from Git Bash too.
 Then set your name and email, as `git config --global user.name "…"` and
 `git config --global user.email "…"`.
 
@@ -103,7 +132,8 @@ From this repository:
 ```bash
 cd shelf
 flutter pub get
-flutter emulators --launch <your emulator's name>   # `flutter emulators` lists them
+flutter emulators                    # lists them; the first column is the ID
+flutter emulators --launch Pixel_8   # use your emulator's ID, not its display name
 flutter run
 ```
 
@@ -127,7 +157,8 @@ Red is correct. That's the starting line.
 |---|---|
 | `Android license status unknown` | `flutter doctor --android-licenses`, then `y` to each |
 | `cmdline-tools component is missing` | SDK Manager → SDK Tools → Android SDK Command-line Tools |
-| Emulator won't start, or is unbearably slow | Enable virtualisation in your BIOS (Windows/Linux); close other apps; or use a physical phone over USB (Developer options → USB debugging) |
+| Emulator won't start, or is unbearably slow | It needs hardware acceleration. **Windows:** enable virtualisation in the BIOS, then install **Android Emulator hypervisor driver** (SDK Manager → SDK Tools), or turn on **Windows Hypervisor Platform** in Windows Features. **Linux:** install KVM and add yourself to the `kvm` group (`sudo usermod -aG kvm $USER`, then log out and in). **Mac:** works out of the box. Details: [Configure hardware acceleration](https://developer.android.com/studio/run/emulator-acceleration). Or skip it: a physical phone over USB (Settings → About phone → tap **Build number** seven times, then Developer options → **USB debugging**). |
+| `xcodebuild requires Xcode, but active developer directory … is a command line tools instance` | `sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer` |
 | `Unable to locate a Java Runtime` or Gradle errors about Java | Use the Java that ships with Android Studio: `flutter config --jdk-dir "<Android Studio's jbr folder>"` |
 | Xcode: `CocoaPods not installed` or license errors | `sudo xcodebuild -license accept`; open Xcode once. Recent Flutter uses Swift Package Manager, so CocoaPods is rarely needed. |
 | `flutter` not found after installing | Its `bin` folder isn't on your PATH. The install guide's "Update your path" step |

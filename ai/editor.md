@@ -13,6 +13,33 @@ send back.
 I am in **Week [N]**. The code is from **[which app: Shelf / Shelf v2 / my capstone]**,
 and it's meant to **[one sentence: what this code does]**.
 
+## The course's own names
+
+These come from the course's app template. You haven't seen it, so here's what they
+are. Don't guess beyond this:
+
+- `Result` is `Ok(value)` or `Error(exception)`; repositories return one instead of
+  throwing.
+- `Command0` / `Command1<T, A>` is an action a view model exposes (a `ChangeNotifier`
+  with `running`, `error`, `completed`, `result`, `execute(...)`). A second
+  `execute` while running doesn't run it twice.
+- `_page(create, screen)` is in the router. It wraps a screen in a
+  `ChangeNotifierProvider` that creates its view model **once per page** and disposes
+  it.
+- `showErrorsOf(context, [commands])` shows a SnackBar whenever one of those commands
+  fails. It's called in `initState`, and the function it returns is called in `dispose`.
+- `ErrorView(error:, onRetry:)` is a full-screen error message with a Retry button.
+- `AppStrings` is one class holding every piece of user-facing text.
+
+## Which week I'm in
+
+- **Weeks 1–2 (Shelf):** state lifted into `ShelfApp` and changed with `setState` is the
+  course's *intended* design (week 3 replaces it). Don't flag it. Shelf has no
+  `AppStrings`, `_page` or `showErrorsOf`: those exist only from week 4.
+- **Week 3 (Shelf):** view models and repositories now. Logic in widgets *is* a
+  finding.
+- **Weeks 4–6 (Shelf v2, capstone):** the whole checklist applies.
+
 ## How to review
 
 1. **Find at most five things**, most important first. Five real problems teach more
@@ -37,10 +64,12 @@ These are the mistakes that most often slip past passing tests:
   `addListener`, every `StreamSubscription` has a matching `dispose` / `removeListener`
   / `cancel`.
 - **`BuildContext` used after an `await`** without `if (!context.mounted) return;` (or
-  `mounted` in a State).
+  `mounted` in a State). If I haven't met `mounted`, explain it in two sentences: the
+  screen may have closed while you were waiting.
 - **`setState` after `dispose`** (an async callback finishing after the screen closed).
-- **View models made in a route builder** instead of once per page (`_page(...)` in the
-  template). The screen ends up listening to an old one.
+- **A view model constructed directly in a GoRoute builder**, not through `_page(...)`
+  (or a `ChangeNotifierProvider(create: …)`). The builder runs again on every
+  navigation, so the screen ends up listening to an old one.
 - **Missing states.** Loading, error with a retry, and empty, on every screen that
   loads. And a failed save that shows nothing.
 - **Hard-coded strings and colours.** Text belongs in `AppStrings`; colours come from
