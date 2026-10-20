@@ -91,6 +91,16 @@ final confirmed = await showDialog<bool>(
 if (confirmed ?? false) viewModel.delete.execute();
 ```
 
+### Bring your own code
+
+Search is yours from week 3. Copy `lib/data/services/open_library_service.dart` from
+`shelf/` into `shelf_v2` (it now needs `Book.fromOpenLibrary(doc)` with `updatedAt`),
+and rebuild the search screen on the template's pattern in `lib/ui/search/`.
+
+And one string changes: the template's `AppStrings.notFound` talks about items. Make
+it `Book not found.` A push for a deleted book (week 5) shows exactly that, and a test
+checks it.
+
 ### Wiring
 
 - `config/dependencies_firebase.dart` provides a `BookRepository`
@@ -106,7 +116,15 @@ Shelf v2 runs on Firebase. Before deleting the others, do the reading exercise
 below. Then delete: `lib/ui/items/`, the item model and repositories, `main_rest.dart`,
 `main_supabase.dart`, their `dependencies_*` and config files, `api_client.dart`,
 `local_db.dart`, `tool/dev_server.dart`, `supabase/`, and the tests that only test
-those. Then remove `supabase_flutter`, `sqflite`, `sqflite_common_ffi`, `shelf` and
+those.
+
+**Keep** the tests that check accounts and routing, because they still matter:
+`test/routing/router_test.dart` (change its `ItemRepository` provider to your
+`BookRepository` plus an `OpenLibraryService`, and drop the `/items/new` test),
+the auth contract (`test/contracts/auth_repository_contract.dart`, with a
+`fakes_contract_test.dart` that runs it on `FakeAuthRepository` and a Firebase one),
+and `test/contracts/contract_helpers.dart`. Without the router tests, nothing checks
+that signing out sends you back to sign-in. Then remove `supabase_flutter`, `sqflite`, `sqflite_common_ffi`, `shelf` and
 `shelf_router` from `pubspec.yaml`. `check.sh` must end green.
 
 Deleting code you don't use isn't a loss. It's the cheapest way to make the rest

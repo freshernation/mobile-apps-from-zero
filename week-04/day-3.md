@@ -77,7 +77,10 @@ purpose.
 ### The fake, and the contract
 
 `testing/fakes/fake_book_repository.dart`: an in-memory repository per user, with a
-`failWith` exception you can set to make every call fail. It's the same as
+`failWith` exception you can set to make every call fail. The tests build it as
+`FakeBookRepository(userId: …, store: …, books: […])`, where `FakeBookStore` holds
+every user's books so several fakes can share one "server" (that's how the contract
+tests two users). It's the same as
 `FakeItemRepository`, books instead of items. Tomorrow's view-model tests run on it.
 
 `test/week_04/book_repository_contract.dart` (copied in with this week's tests) is
