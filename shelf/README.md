@@ -1,17 +1,17 @@
-# shelf_app
+# Shelf
 
-A new Flutter project.
+The app you build by hand in weeks 1–3: a reading tracker. It starts as the
+`flutter create` counter app. By the end of week 3 it searches Open Library, keeps
+your books on three shelves, tracks your page, and saves everything on the phone.
 
-## Getting Started
+Every file you'll write is already here as a **stub**: it compiles, and it throws
+`UnimplementedError('Week N, day M: …')` until you write it. Each day's lesson says
+which stubs are yours today.
 
-This project is a starting point for a Flutter application.
+```bash
+flutter run                                   # on your emulator or phone
+flutter test test/week_01/day_1_test.dart     # one day's tests
+flutter test                                  # everything so far
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Every test fails before you start. That's the starting line, not a problem.
