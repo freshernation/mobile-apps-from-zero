@@ -154,7 +154,10 @@ cd shelf
 flutter test test/week_03/day_3_test.dart
 ```
 
-5. **On a device:** search, add a book, see it on Want to read. Then turn on airplane
+5. **On a device:** search for *piranesi*. On iOS, autocorrect may turn it into
+   "pirates I" before you even submit. That's why the search field sets
+   `autocorrect: false` and `enableSuggestions: false` (there's a test for it). Some
+   bugs only exist on a real keyboard. Then add a book and see it on Want to read. Then turn on airplane
    mode and search again. You should see your error and retry button, not a spinner
    forever and not a crash.
 

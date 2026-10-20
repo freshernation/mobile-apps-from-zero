@@ -180,6 +180,15 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    testWidgets('the search box does not autocorrect titles', (tester) async {
+      await show(tester, MockClient((_) async => http.Response(searchReply([]), 200)));
+
+      final field = tester.widget<TextField>(find.byKey(const Key('search-field')));
+
+      expect(field.autocorrect, isFalse, reason: 'iOS turns "piranesi" into "pirates I"');
+      expect(field.enableSuggestions, isFalse);
+    });
+
     testWidgets('no results says so', (tester) async {
       await show(tester, MockClient((_) async => http.Response(searchReply([]), 200)));
 

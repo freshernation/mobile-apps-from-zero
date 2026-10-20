@@ -5,7 +5,8 @@ import 'search_view_model.dart';
 
 /// Search Open Library and add books to your shelf.
 ///
-/// 'search-field': type and submit to search. While searching, a progress
+/// 'search-field': type and submit to search. Turn off autocorrect and
+/// suggestions — they "fix" book titles into other words. While searching, a progress
 /// indicator. On failure, 'search-error' with a 'retry' button. No results:
 /// 'No books match' ('search-empty'). Each result is a row keyed
 /// `'result-$id'` with an add button `'add-$id'`, which becomes a check
