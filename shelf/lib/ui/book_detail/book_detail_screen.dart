@@ -9,9 +9,26 @@ import '../../domain/models/book.dart';
 /// its Key — 'book-title', 'book-authors', 'book-pages', 'book-status',
 /// and 'cover-placeholder' or 'cover-image'.
 class BookDetailScreen extends StatelessWidget {
-  const BookDetailScreen({super.key, required this.book});
+  const BookDetailScreen({
+    super.key,
+    required this.book,
+    this.onPageChanged,
+    this.onStatusChanged,
+    this.onDelete,
+  });
 
   final Book book;
+
+  // Week 2, day 1 — ignore these three until then.
+
+  /// Called with the new page when the reader moves the progress slider.
+  final ValueChanged<int>? onPageChanged;
+
+  /// Called when the reader picks a different shelf.
+  final ValueChanged<ShelfStatus>? onStatusChanged;
+
+  /// Called when the reader taps delete.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
