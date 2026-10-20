@@ -63,6 +63,8 @@ class Book {
   Map<String, Object?> toJson() =>
       throw UnimplementedError('Week 1, day 2: toJson');
 
+  /// Only id and title are required. Anything else missing (authors, status,
+  /// currentPage…) gets the same default as the constructor.
   factory Book.fromJson(Map<String, Object?> json) =>
       throw UnimplementedError('Week 1, day 2: fromJson');
 

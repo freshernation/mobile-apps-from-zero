@@ -6,8 +6,16 @@ import '../../domain/models/book.dart';
 /// Everything about one book.
 ///
 /// Build it from the widgets in today's lesson. The tests find each piece by
-/// its Key — 'book-title', 'book-authors', 'book-pages', 'book-status',
-/// and 'cover-placeholder' or 'cover-image'.
+/// its Key — put each Key on the Text (or Chip, or Image) itself:
+///   'book-title'    the title
+///   'book-authors'  `book.authorLine`
+///   'book-pages'    '412 pages', or 'Page count unknown' when there is none
+///   'book-status'   a Chip with `book.status.label`
+///   'cover-placeholder' (an Icon) or 'cover-image' (an Image.network)
+///
+/// Week 2, day 1 adds: a shelf picker keyed 'status-picker' (shown when
+/// [onStatusChanged] is given) and a delete IconButton in the app bar keyed
+/// 'delete-book' (shown when [onDelete] is given).
 class BookDetailScreen extends StatelessWidget {
   const BookDetailScreen({
     super.key,
