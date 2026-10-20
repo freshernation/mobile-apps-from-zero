@@ -124,10 +124,14 @@ otherwise the current one".
 ### `==` and `hashCode`
 
 ```dart
-const a = Book(id: '1', title: 'Dune');
-const b = Book(id: '1', title: 'Dune');
+final a = Book(id: '1', title: 'Dune');   // two separate objects
+final b = Book(id: '1', title: 'Dune');
 a == b;     // false — until you override ==
 ```
+
+(Why not `const` here? Two identical `const` expressions are the *same* object, as
+Dart makes only one, so they'd be equal even without an override. That's handy, and
+also exactly why this example can't use `const`.)
 
 By default `==` asks "are these the **same object**?", not "do they hold the same
 values?". For a model you want the second meaning, so you override `==`:
@@ -171,7 +175,18 @@ currentPage: (json['currentPage'] as int?) ?? 0,
 ```
 
 `authors` is the fiddly one: `json['authors']` is a `List<dynamic>`, not a
-`List<String>`. Look up `.cast<String>()`.
+`List<String>`. Look up `.cast<String>()`. And it can be **missing**: the test with
+only `id` and `title` expects an empty list then, not a crash. One way to write
+"the list, cast, or nothing":
+
+```dart
+authors: [...?(json['authors'] as List?)?.cast<String>()],
+```
+
+Read it inside out: `as List?` (a list or null), then `?.cast<String>()` (cast it,
+unless it's null), then `...?` (spread its items into this new list, unless it's
+null, in which case add nothing). The same goes for `status`: if it's missing, use
+`ShelfStatus.wantToRead`.
 
 ---
 

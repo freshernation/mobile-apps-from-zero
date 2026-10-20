@@ -33,7 +33,7 @@ class ReadingProgress extends StatefulWidget {
 }
 
 class _ReadingProgressState extends State<ReadingProgress> {
-  late int _page = widget.book.currentPage;      // the state
+  late int _page = widget.book.currentPage;      // the state (see below)
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +45,25 @@ class _ReadingProgressState extends State<ReadingProgress> {
 The **widget** is a cheap, immutable description that gets thrown away and rebuilt
 constantly. The **State** object survives those rebuilds: it's where `_page` lives.
 Inside the State, `widget.book` reads the widget's current fields.
+
+`late` lets a field's starting value read `widget`, which doesn't exist yet when
+the State object is built. `late` means "work this out the first time someone reads
+it". The other way, which you'll see all through the template, is `initState`, the
+State's "I've just been created" hook:
+
+```dart
+late int _page;
+
+@override
+void initState() {
+  super.initState();          // always first
+  _page = widget.book.currentPage;
+}
+```
+
+Both run once. Use `initState` when starting up does more than set one field: it's
+also where you start listening to things (and `dispose`, its mirror, is where you
+stop).
 
 ### `setState`: "I changed something, redraw me"
 
@@ -125,16 +144,19 @@ The `!=` here uses the `==` you wrote last week.
 ### `SegmentedButton` for picking one of a few
 
 ```dart
-SegmentedButton<ShelfStatus>(
-  segments: [
-    for (final status in ShelfStatus.values)
-      ButtonSegment(value: status, label: Text(status.label)),
-  ],
-  selected: {book.status},
-  onSelectionChanged: (selected) => onStatusChanged(selected.first),
-)
+if (onStatusChanged case final onStatusChanged?)
+  SegmentedButton<ShelfStatus>(
+    segments: [
+      for (final status in ShelfStatus.values)
+        ButtonSegment(value: status, label: Text(status.label)),
+    ],
+    selected: {book.status},
+    onSelectionChanged: (selected) => onStatusChanged(selected.first),
+  ),
 ```
 
+Inside the `if (… case final onStatusChanged?)`, `onStatusChanged` is the non-null
+version, so you can call it. Outside, it's nullable and Dart won't let you.
 `selected` is a `Set` because segmented buttons can allow multiple picks. Ours
 doesn't, so take `.first`.
 

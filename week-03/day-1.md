@@ -61,16 +61,21 @@ final class Error<T> extends Result<T> { final Exception error; }
 ```
 
 Instead of throwing, a repository **returns** either `Ok(value)` or `Error(exception)`.
-Because the class is `sealed`, a `switch` on it must handle both, or it won't compile:
+Because the class is `sealed` (every subclass is in this one file, so Dart knows
+the full list), a `switch` on it must handle both, or it won't compile:
 
 ```dart
 switch (await repository.updateBook(book)) {
-  case Ok(:final value):
+  case Ok(:final value):        // "if it's an Ok, call its value `value`"
     // use value
   case Error(:final error):
     // you're forced to decide what failure means here
 }
 ```
+
+`case Ok(:final value)` is a **pattern**: it checks the type *and* pulls out the
+field in one step. It's shorthand for "if this is an `Ok`, let `value` be its
+`.value`". `if (result case Ok(:final value)) { … }` does the same thing in an `if`.
 
 Compare last week's `try`/`on`: forgetting the `catch` compiles fine and crashes in
 your user's hand. Forgetting the `Error` case here doesn't compile. Same idea, and

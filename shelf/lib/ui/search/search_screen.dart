@@ -11,6 +11,11 @@ import 'search_view_model.dart';
 /// 'No books match' ('search-empty'). Each result is a row keyed
 /// `'result-$id'` with an add button `'add-$id'`, which becomes a check
 /// icon once the book is on your shelf.
+///
+/// It is handed its view model (no provider above it), so listen with
+/// `ListenableBuilder(listenable: Listenable.merge([viewModel, viewModel.search]))`
+/// — the view model has the results, the `search` command knows running and
+/// error (week 3, day 2).
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.viewModel});
 

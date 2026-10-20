@@ -98,7 +98,12 @@ ratings['Ulysses'];                         // null: not in the map
 ```
 
 That last `null` matters tomorrow. For now, note that asking a map for a missing key
-doesn't crash. It gives you "nothing".
+doesn't crash. It gives you "nothing". When you want a fallback instead, `??` means
+"or this, if it's null":
+
+```dart
+ratings['Ulysses'] ?? 0;     // 0
+```
 
 ### Functions
 

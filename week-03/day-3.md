@@ -84,6 +84,10 @@ try {
   return const Result.error(NetworkException());
 } on FormatException {          // not JSON at all: a café wifi login page, say
   return const Result.error(NetworkException());
+} on http.ClientException {     // the connection broke mid-request
+  return const Result.error(NetworkException());
+} on TimeoutException {         // no answer within 10 seconds (import 'dart:async')
+  return const Result.error(NetworkException());
 }
 ```
 
@@ -124,6 +128,14 @@ This is why the constructor takes an `http.Client`. Tests pass a fake that answe
 instantly, with exactly the reply (or the failure) the test wants. Tests that hit the
 real network are slow, flaky, and fail on a plane. None of Shelf's tests touch the
 real internet.
+
+### The search screen listens to two things
+
+`SearchScreen` is given its `SearchViewModel`, with no provider, so it uses
+yesterday's `ListenableBuilder` with `Listenable.merge([viewModel, viewModel.search])`.
+The `search` Command tells you *running* (spinner) and *error* (the error with a retry
+button), and the view model tells you the *results*. Leave either one out and a state
+never appears. Re-read the end of day 2 if this is fuzzy.
 
 ### The search view model, and adding without duplicates
 

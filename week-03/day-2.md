@@ -49,6 +49,11 @@ class ShelfViewModel extends ChangeNotifier {
 }
 ```
 
+`late final Command0<void> load;` is a field that's set
+exactly once, in the constructor body, and can't be read before then. The commands
+need `this` (they call `_load`), which only exists inside the constructor body, so
+they can't be set in the field declaration.
+
 `required this._repository` assigns a private field, and the parameter is still
 called `repository` from outside.
 
@@ -126,6 +131,40 @@ call something, not redraw.
 Now look at what disappeared: no `_change`, no `_router.refresh()`. The detail
 screen's builder is inside a `Consumer`, so a new page number redraws it, because
 the view model says so, not because you remembered to.
+
+### A widget that is *handed* a view model: `ListenableBuilder`
+
+`Consumer` finds the view model through the provider above it. Tomorrow's search
+screen works differently: it's **given** its view model in the constructor
+(`SearchScreen(viewModel: vm)`), and its tests build it with no provider at all, so
+`Consumer` and `context.watch` would throw "Could not find the correct Provider".
+For a widget holding its own reference, listen directly:
+
+```dart
+ListenableBuilder(
+  listenable: viewModel,                 // anything that notifies
+  builder: (context, _) => Text('${viewModel.books.length} books'),
+)
+```
+
+A `Command` is a `ChangeNotifier` too, and it's the thing that knows "running" and
+"failed". To redraw when **either** the data **or** the command changes, merge them:
+
+```dart
+ListenableBuilder(
+  listenable: Listenable.merge([viewModel, viewModel.search]),
+  builder: (context, _) {
+    if (viewModel.search.running) return const CircularProgressIndicator();
+    if (viewModel.search.error) return const Text('Failed');
+    return ResultsList(viewModel.results);
+  },
+)
+```
+
+Listen only to the view model and you'll never see the spinner or the error: the
+view model calls `notifyListeners()` when results arrive, but it's the Command
+that changes when a search starts or fails. The template uses this pattern on
+every screen.
 
 ### The screens didn't change
 
