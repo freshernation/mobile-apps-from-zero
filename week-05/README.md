@@ -30,9 +30,12 @@ bash tool/check.sh
 - Your ship log has, **from a real phone**:
   - a scan adding a book, and the permission-denied message;
   - the reminder arriving on a locked phone;
-  - a push opening a book with the app closed;
+  - a push opening a book with the app closed (an Android phone, or an Android
+    emulator with a Google Play system image; iPhone-only without a paid Apple
+    account: attend the instructor's iOS demo and record yours on the emulator);
   - TalkBack or VoiceOver reading the book screen;
   - the largest text size on every screen;
-  - your icon, the launch screen, and the release build running.
+  - your icon, the launch screen, and the release build running (`flutter install`
+    of a release APK on Android, or `flutter run --release` on an iPhone).
 - `CAPSTONE.md` is signed off by your instructor.
 - You pass the [defense](DEFEND.md).

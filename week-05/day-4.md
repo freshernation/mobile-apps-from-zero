@@ -84,10 +84,53 @@ keyAlias=upload
 storeFile=/Users/you/upload-keystore.jks
 ```
 
-and teach Gradle to use it in `android/app/build.gradle.kts`: read `key.properties`
-if it exists, create a `release` signing config from it, and use that for release
-builds (falling back to the debug key when the file isn't there, so a fresh clone
-still builds). The Flutter docs above have the exact Kotlin.
+`storeFile` must be an **absolute** path (Gradle doesn't expand `~`). On Windows,
+use forward slashes: `C:/Users/you/upload-keystore.jks`.
+
+Then teach Gradle to use it, in `android/app/build.gradle.kts`. Don't paste the
+docs' snippet as-is: it assumes `key.properties` exists, so on a fresh clone (or
+your teammate's laptop) **every** build fails, debug included. This version falls
+back to the debug key when the file isn't there:
+
+```kotlin
+import java.io.FileInputStream
+import java.util.Properties
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    // ...namespace, compileSdk and the rest stay as they are...
+
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+        }
+    }
+}
+```
+
+The two `import` lines go at the very top of the file, above `plugins { … }`. Check
+which key a release build will use with
+`cd android && ./gradlew :app:signingReport` (look for `Variant: release`).
 
 ```bash
 flutter build appbundle        # build/app/outputs/bundle/release/app-release.aab — what Play wants
@@ -102,10 +145,13 @@ Feel the difference: no DEBUG banner, and it starts noticeably faster.
 iOS signing is handled by Xcode and your Apple account:
 
 1. `open ios/Runner.xcworkspace`, select **Runner** → **Signing & Capabilities**, and
-   choose your team. A free Apple ID can install to your own phone for 7 days. The
-   App Store needs the paid program.
-2. `flutter build ipa` builds the archive. With a paid account, Xcode's
-   **Organizer** uploads it to TestFlight.
+   choose your team.
+2. **With a free Apple ID** (no paid program): plug in your iPhone and run
+   `flutter run --release`. That's a real release build, installed on your phone for
+   7 days. That's what your ship log needs. (`flutter build ipa` would build the
+   archive but then fail at the App Store export step without the paid program.)
+3. **With the paid program:** `flutter build ipa`, then Xcode's **Organizer** uploads
+   it to TestFlight.
 
 ### Publishing: what's left, and why it's not required
 
