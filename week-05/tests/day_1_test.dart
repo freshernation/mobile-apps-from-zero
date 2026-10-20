@@ -101,9 +101,12 @@ void main() {
     late FakeBookRepository books;
     late ScanViewModel scan;
 
-    ScanViewModel build(List<Map<String, Object?>> docs) {
+    ScanViewModel build(
+      List<Map<String, Object?>> docs, {
+      List<Book> shelf = const [],
+    }) {
       requests = 0;
-      books = FakeBookRepository();
+      books = FakeBookRepository(books: shelf);
       return ScanViewModel(
         service: OpenLibraryService(
           client: MockClient((_) async {
@@ -154,6 +157,34 @@ void main() {
 
       expect((scan.onBarcode.result as Error).error, isA<NotFoundException>());
       expect((await books.getBooks() as Ok<List<Book>>).value, isEmpty);
+    });
+
+    test('scanning a book already on your shelf leaves it as it is', () async {
+      final reading = Book(
+        id: 'OL893414W',
+        title: 'Dune',
+        pageCount: 608,
+        status: ShelfStatus.reading,
+        currentPage: 300,
+        updatedAt: DateTime.utc(2026),
+      );
+      scan = build([duneDoc], shelf: [reading]);
+
+      await scan.onBarcode.execute('9780441172719');
+
+      expect((scan.onBarcode.result as Ok<Book?>).value, reading);
+      final saved = (await books.getBooks() as Ok<List<Book>>).value;
+      expect(saved.single, reading, reason: 'not reset to page 0');
+    });
+
+    test('an ISBN Open Library does not know is looked up once', () async {
+      scan = build([]);
+
+      await scan.onBarcode.execute('9780441172719');
+      await scan.onBarcode.execute('9780441172719');
+
+      expect(requests, 1);
+      expect((scan.onBarcode.result as Error).error, isA<NotFoundException>());
     });
 
     test(

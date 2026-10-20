@@ -98,9 +98,16 @@ network.
 |---|---|
 | not an ISBN | `Ok(null)`, and nothing is sent anywhere |
 | an ISBN already found a moment ago | the same `Ok(book)` again, with no new request (the camera sees it 30 times a second) |
+| an ISBN Open Library knows, for a book **already on your shelf** | that book, **unchanged**, `Ok(book)`: re-adding it would reset your page and move it back to Want to read |
 | an ISBN Open Library knows | the book is added on **Want to read**, `Ok(book)` |
-| an ISBN Open Library doesn't know | `NotFoundException` |
-| no connection | `NetworkException`, and scanning again retries |
+| an ISBN Open Library doesn't know | `NotFoundException`, and while it stays in view it isn't asked about again |
+| no connection | `NetworkException`, and scanning again retries (a failed connection isn't remembered, an answer is) |
+
+To check "already on your shelf", ask your repository with `getBook(id)`: `Ok` means
+it's there; `NotFoundException` means add it.
+
+Put the view model in `lib/ui/scan/scan_view_model.dart` and `isbnFrom` in
+`lib/ui/scan/isbn.dart`. The tests import them from there.
 
 The screen shows the result under the camera: a progress bar while looking up,
 "Added *Dune* to Want to read" with an **Open** button, or the error. Add a scan

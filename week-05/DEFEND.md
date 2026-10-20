@@ -24,8 +24,8 @@ build** on a real phone, and `CAPSTONE.md` open.
 
 Say what you'll change first, then type. AI allowed; you explain every line.
 
-- **A.** "Scanning a book that's already on my shelf should open it, not add it
-  again." Which class changes? Write the test first.
+- **A.** "Scanning a book that's already on my shelf should jump straight to its page,
+  instead of showing 'Added'." Which classes change? Write the test first.
 - **B.** "The reminder should only fire on weekdays." What does the notification
   plugin offer? Where does the change go?
 
