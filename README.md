@@ -103,7 +103,7 @@ logs/                   signal log, stuck log, ship log
 ```
 
 From week 4 you work in **`shelf_v2/`**, your own copy of the course's app template
-(`mobile-app-template`, link from your instructor), next to `shelf/`. In week 6 your
+([`mobile-app-template`](https://github.com/freshernation/mobile-app-template)), next to `shelf/`. In week 6 your
 capstone is a new repository of its own.
 
 ## Running the tests

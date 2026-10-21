@@ -38,11 +38,11 @@ don't understand something. Friday's defense will point at lines at random.
 
 ### Get your copy
 
-Your instructor shares the link to the `mobile-app-template` repository. Put your
+The template lives at [github.com/freshernation/mobile-app-template](https://github.com/freshernation/mobile-app-template). Put your
 copy next to `shelf/` in this course repo:
 
 ```bash
-git clone <template link> shelf_v2
+git clone https://github.com/freshernation/mobile-app-template.git shelf_v2
 rm -rf shelf_v2/.git          # it's your app now, not a copy of theirs
 cd shelf_v2
 flutter pub get

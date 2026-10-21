@@ -16,7 +16,7 @@ day 2. Everything after that is repetition of a pattern you've done twice.
 
 ```bash
 cd ..                                     # next to this course, not inside it
-git clone <template link> my_app && cd my_app
+git clone https://github.com/freshernation/mobile-app-template.git my_app && cd my_app
 rm -rf .git && git init
 dart run tool/rename.dart my_app com.yourname.myapp "My App"
 flutter pub get
